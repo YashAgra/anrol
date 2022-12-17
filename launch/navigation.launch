@@ -1,0 +1,20 @@
+<launch>
+
+<!-- AMCL Launch file -->
+<include file="$(find anrol)/launch/amcl.launch">
+<arg name="map" value="hostelroom"/>
+</include>
+
+
+
+<!-- Move base Launch file -->
+<include file="$(find anrol)/launch/move_base.launch"/>
+
+<!--start rviz-->
+<node pkg="rviz" type="rviz" name="rviz" required="true"
+          args="-d $(find anrol)/rviz/navigate.rviz"/>
+
+<!-- start rf20 laser odometry-->
+<include file="$(find rf2o_laser_odometry)/launch/rf2o_laser_odometry.launch"/>
+
+</launch>

@@ -1,0 +1,8 @@
+prefix=/home/zepgar/anrol_ws/install
+
+Name: anrol
+Description: Description of anrol
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

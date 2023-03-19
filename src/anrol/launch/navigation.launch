@@ -2,7 +2,7 @@
 
 <!-- AMCL Launch file -->
 <include file="$(find anrol)/launch/amcl.launch">
-<arg name="map" value="hostelroom"/>
+<arg name="map" value="rf_lab"/>
 </include>
 
 

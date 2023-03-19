@@ -6,5 +6,5 @@ CXX_FLAGS = -fPIC   -std=gnu++17
 
 CXX_DEFINES = -DROSCONSOLE_BACKEND_LOG4CXX -DROS_BUILD_SHARED_LIBS=1 -DROS_PACKAGE_NAME=\"rf2o_laser_odometry\" -Drf2o_laser_odometry_EXPORTS
 
-CXX_INCLUDES = -I/home/zepgar/anrol_ws/src/rf2o_laser_odometry/include -isystem /home/zepgar/catkin_ws/devel/include -isystem /home/zepgar/catkin_ws/src/sensor_msgs/include -isystem /opt/ros/noetic/include -isystem /opt/ros/noetic/share/xmlrpcpp/cmake/../../../include/xmlrpcpp -isystem /usr/include/eigen3 
+CXX_INCLUDES = -I/home/zepgar/anrol_ws/src/rf2o_laser_odometry/include -isystem /opt/ros/noetic/include -isystem /opt/ros/noetic/share/xmlrpcpp/cmake/../../../include/xmlrpcpp -isystem /usr/include/eigen3 
 

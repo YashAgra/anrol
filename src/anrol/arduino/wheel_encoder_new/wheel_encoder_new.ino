@@ -25,8 +25,7 @@ geometry_msgs::Twist msg;
 
 float move1;
 float move2;
-
-
+int speed = 200;
 
 //encoded motors inports-------------------
 #define ENC_IN_LEFT_A 18
@@ -48,18 +47,6 @@ boolean Direction_right = true;
 const int encoder_minimum = -32768;
 const int encoder_maximum = 32767;
 
-// Keep track of the number of wheel ticks
-std_msgs::Int16 right_wheel_tick_count;
-ros::Publisher rightPub("right_ticks", &right_wheel_tick_count);
-
-std_msgs::Int16 left_wheel_tick_count;
-ros::Publisher leftPub("left_ticks", &left_wheel_tick_count);
-
-// 100ms interval for measurements
-const int interval = 100;
-long previousMillis = 0;
-long currentMillis = 0;
-
 //call back function for subscriber
 void callback(const geometry_msgs::Twist& cmd_vel)
 {
@@ -67,39 +54,39 @@ void callback(const geometry_msgs::Twist& cmd_vel)
   move2 = cmd_vel.angular.z;
   if (move1 > 0 && move2 == 0)
   {
-    back(255);
+    back(speed);
   }
   else if (move1 == 0 && move2 > 0 )
   {
-    right(255);
+    right(speed);
   }
   else if (move1 == 0 && move2 < 0 )
   {
-    left(255);
+    left(speed);
   }
   else if (move1 < 0)
   {
-    front(255);
+    front(speed);
   }
   else if (abs(move1) < abs(move2)) {
     if (move2 > 0 )
     {
-      right(255);
+      right(speed);
     }
     else if (move2 < 0 )
     {
-      left(255);
+      left(speed);
     }
   }
 
   else if (abs(move1) > abs(move2)) {
     if (move1 > 0)
     {
-      back(255);
+      back(speed);
     }
     else if (move1 < 0)
     {
-      front(255);
+      front(speed);
     }
   }
   else
@@ -107,7 +94,26 @@ void callback(const geometry_msgs::Twist& cmd_vel)
     die();
   }
 }
-ros::Subscriber <geometry_msgs::Twist> sub("/cmd_vel", callback);
+
+
+// Keep track of the number of wheel ticks
+
+
+
+ros::Subscriber<geometry_msgs::Twist> sub("cmd_vel", &callback);
+
+std_msgs::Int16 right_wheel_tick_count;
+ros::Publisher rightPub("right_ticks", &right_wheel_tick_count);
+
+std_msgs::Int16 left_wheel_tick_count;
+ros::Publisher leftPub("left_ticks", &left_wheel_tick_count);
+
+
+// 100ms interval for measurements
+const int interval = 100;
+long previousMillis = 0;
+long currentMillis = 0;
+
 
 //use only two motors here
 const int rightback = 4;
@@ -123,26 +129,33 @@ void setup() {
   pinMode(ENC_IN_LEFT_B , INPUT);
   pinMode(ENC_IN_RIGHT_A , INPUT_PULLUP);
   pinMode(ENC_IN_RIGHT_B , INPUT);
-  Serial.begin(57600);
   // Every time the pin goes high, this is a tick
   attachInterrupt(digitalPinToInterrupt(ENC_IN_LEFT_A), left_wheel_tick, RISING);
   attachInterrupt(digitalPinToInterrupt(ENC_IN_RIGHT_A), right_wheel_tick, RISING);
 
-  nh.getHardware()->setBaud(9600);
+  nh.getHardware()->setBaud(115200);
   nh.initNode();
-   nh.advertise(leftPub);
-   nh.advertise(rightPub);
- // nh.subscribe(sub);
+  nh.advertise(leftPub);
+  nh.advertise(rightPub);
+  nh.subscribe(sub);
+ 
 }
 
+void left_wheel_tick(){
+  left_wheel_tick_count.data = static_cast<int16_t>(leftMotor.read());
+  
+}
+void right_wheel_tick(){
+  right_wheel_tick_count.data = static_cast<int16_t>(rightMotor.read());  
+  
+}
 void loop() {
   currentMillis = millis();
-
-  // If 100ms have passed, print the number of ticks
-  left_wheel_tick_count.data = static_cast<int16_t>(leftMotor.read());
-  //  rightPub.publish( &right_wheel_tick_count );
   leftPub.publish( &left_wheel_tick_count );
+  rightPub.publish( &right_wheel_tick_count );
+  // If 100ms have passed, print the number of ticks
   nh.spinOnce();
+  delay(100);
 }
 
 void back(float speed)
@@ -172,7 +185,7 @@ void front(float speed)
   // digitalWrite(rightforw, LOW);
   // digitalWrite(leftback, HIGH);
   // digitalWrite(rightback, HIGH);
-  (100);
+  delay(100);
   die();
 }
 void right(float speed)
@@ -205,106 +218,106 @@ void left(float speed)
 }
 void die()
 {
-  // m.motor(leftforw, RELEASE, 255);
-  // m.motor(rightforw, RELEASE, 255);
+  // m.motor(leftforw, RELEASE, speed);
+  // m.motor(rightforw, RELEASE, speed);
   motor1.setSpeed(0);
   motor2.setSpeed(0);
-  //    m.motor(leftback, RELEASE, 255);
-  //    m.motor(rightback, RELEASE, 255);
+  //    m.motor(leftback, RELEASE, speed);
+  //    m.motor(rightback, RELEASE, speed);
   // digitalWrite(leftforw, LOW);
   // digitalWrite(rightforw, LOW);
   // digitalWrite(leftback, LOW);
   // digitalWrite(rightback, LOW);
 }
 
-void right_wheel_tick() {
-
- // Read the value for the encoder for the right wheel
- int val = digitalRead(ENC_IN_RIGHT_B);
-
- if(val == LOW) {
-   Direction_right = false; // Reverse
- }
- else {
-   Direction_right = true; // Forward
- }
-
- if (Direction_right) {
-
-   if (right_wheel_tick_count.data == encoder_maximum) {
-     right_wheel_tick_count.data = encoder_minimum;
-   }
-   else {
-     right_wheel_tick_count.data++;
-   }
- }
- else {
-   if (right_wheel_tick_count.data == encoder_minimum) {
-     right_wheel_tick_count.data = encoder_maximum;
-   }
-   else {
-     right_wheel_tick_count.data--;
-   }
- }
-}
+//void right_wheel_tick() {
 //
-//// Increment the number of ticks
+// // Read the value for the encoder for the right wheel
+// int val = digitalRead(ENC_IN_RIGHT_B);
+//
+// if(val == LOW) {
+//   Direction_right = false; // Reverse
+// }
+// else {
+//   Direction_right = true; // Forward
+// }
+//
+// if (Direction_right) {
+//
+//   if (right_wheel_tick_count.data == encoder_maximum) {
+//     right_wheel_tick_count.data = encoder_minimum;
+//   }
+//   else {
+//     right_wheel_tick_count.data++;
+//   }
+// }
+// else {
+//   if (right_wheel_tick_count.data == encoder_minimum) {
+//     right_wheel_tick_count.data = encoder_maximum;
+//   }
+//   else {
+//     right_wheel_tick_count.data--;
+//   }
+// }
+//}
+////
+////// Increment the number of ticks
+////void left_wheel_tick() {
+////
+////  // Read the value for the encoder for the left wheel
+////  int val = digitalRead(ENC_IN_LEFT_B);
+////
+////  if(val == LOW) {
+////    Direction_left = true; // Reverse
+////  }
+////  else {
+////    Direction_left = false; // Forward
+////  }
+////
+////  if (Direction_left) {
+////    if (left_wheel_tick_count.data == encoder_maximum) {
+////      left_wheel_tick_count.data = encoder_minimum;
+////    }
+////    else {
+////      left_wheel_tick_count.data++;
+////    }
+////  }
+////  else {
+////    if (left_wheel_tick_count.data == encoder_minimum) {
+////      left_wheel_tick_count.data = encoder_maximum;
+////    }
+////    else {
+////      left_wheel_tick_count.data--;
+////    }
+////  }
+////}
+//
 //void left_wheel_tick() {
-//
+//   
 //  // Read the value for the encoder for the left wheel
 //  int val = digitalRead(ENC_IN_LEFT_B);
-//
+// 
 //  if(val == LOW) {
 //    Direction_left = true; // Reverse
 //  }
 //  else {
 //    Direction_left = false; // Forward
 //  }
-//
+//   
 //  if (Direction_left) {
 //    if (left_wheel_tick_count.data == encoder_maximum) {
 //      left_wheel_tick_count.data = encoder_minimum;
 //    }
 //    else {
-//      left_wheel_tick_count.data++;
-//    }
+//      left_wheel_tick_count.data++;  
+//    }  
 //  }
 //  else {
 //    if (left_wheel_tick_count.data == encoder_minimum) {
 //      left_wheel_tick_count.data = encoder_maximum;
 //    }
 //    else {
-//      left_wheel_tick_count.data--;
-//    }
+//      left_wheel_tick_count.data--;  
+//    }   
 //  }
 //}
-
-void left_wheel_tick() {
-   
-  // Read the value for the encoder for the left wheel
-  int val = digitalRead(ENC_IN_LEFT_B);
- 
-  if(val == LOW) {
-    Direction_left = true; // Reverse
-  }
-  else {
-    Direction_left = false; // Forward
-  }
-   
-  if (Direction_left) {
-    if (left_wheel_tick_count.data == encoder_maximum) {
-      left_wheel_tick_count.data = encoder_minimum;
-    }
-    else {
-      left_wheel_tick_count.data++;  
-    }  
-  }
-  else {
-    if (left_wheel_tick_count.data == encoder_minimum) {
-      left_wheel_tick_count.data = encoder_maximum;
-    }
-    else {
-      left_wheel_tick_count.data--;  
-    }   
-  }
-}

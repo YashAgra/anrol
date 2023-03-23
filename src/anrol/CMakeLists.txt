@@ -105,6 +105,9 @@ find_package(catkin REQUIRED COMPONENTS
 ## LIBRARIES: libraries you create in this project that dependent projects also need
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
+# INCLUDE_DIRECTORIES(/usr/local/lib)
+LINK_DIRECTORIES(/usr/local/lib)
+
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES anrol
@@ -127,7 +130,10 @@ include_directories(
 # add_library(${PROJECT_NAME}
 #   src/${PROJECT_NAME}/anrol.cpp
 # )
-
+#  add_library(anrol src/odom_pub.cpp)
+#    target_link_libraries(odom_pub.cpp
+#      ${catkin_LIBRARIES}
+#    )
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
@@ -136,8 +142,9 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/anrol_node.cpp)
-
+# add_executable(${PROJECT_NAME}_node node/odom_pub.cpp)
+add_executable(odom_pub_node src/odom_pub.cpp)
+target_link_libraries(odom_pub_node ${catkin_LIBRARIES})
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use

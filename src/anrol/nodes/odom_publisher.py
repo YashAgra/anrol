@@ -64,22 +64,25 @@ while not rospy.is_shutdown():
     dt = (current_time - last_time).to_sec()
     dth = (dr-dl)/wheeltrack
 
-    if dr==dl:
-        dx=dr*cos(th)
-        dy=dr*sin(th)
+    dx = dc*sin(dth)
+    dy = dc*(1-cos(dth))
+    # if dr==dl:
+    #     dx=dr*cos(th)
+    #     dy=dr*sin(th)
 
-    else:
-        radius=dc/dth
+    # else:
+    #     radius=dc/dth
 
-        iccX=x-radius*sin(th)
-        iccY=y+radius*cos(th)
+    #     iccX=x-radius*sin(th)
+    #     iccY=y+radius*cos(th)
 
-        dx = cos(dth) * (x-iccX) - sin(dth) * (y-iccY) + iccX - x
-        dy = sin(dth) * (x-iccX) + cos(dt) * (y-iccY) + iccY - y
+    #     dx = cos(dth) * (x-iccX) - sin(dth) * (y-iccY) + iccX - x
+    #     dy = sin(dth) * (x-iccX) + cos(dt) * (y-iccY) + iccY - y
 
     x += dx  
     y += dy 
-    th =(th+dth) %  (2 * pi)
+    # th =(th+dth) %  (2 * pi)
+    th = th+dth
 
     odom_quat = tf.transformations.quaternion_from_euler(0, 0, th)
 
@@ -110,6 +113,6 @@ while not rospy.is_shutdown():
     odom_pub.publish(odom)
 
     last_left_ticks = left_ticks
-    last_left_ticks = right_ticks
+    last_right_ticks = right_ticks
     last_time = current_time
     r.sleep()

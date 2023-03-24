@@ -77,14 +77,14 @@ void Calc_Left(const std_msgs::Int16& leftCount) {
          
     int leftTicks = (leftCount.data - lastCountL);
  
-    if (leftTicks > 10000) {
-      leftTicks = 0 - (65535 - leftTicks);
-    }
-    else if (leftTicks < -10000) {
-      leftTicks = 65535-leftTicks;
-    }
-    else{}
-    distanceLeft = leftTicks/TICKS_PER_METER;
+    // if (leftTicks > 10000) {
+    //   leftTicks = 0 - (65535 - leftTicks);
+    // }
+    // else if (leftTicks < -10000) {
+    //   leftTicks = 65535-leftTicks;
+    // }
+    // else{}
+    distanceLeft = (leftTicks/TICKS_PER_REVOLUTION) * 2 * PI * WHEEL_RADIUS;
   }
   lastCountL = leftCount.data;
 }
@@ -97,14 +97,14 @@ void Calc_Right(const std_msgs::Int16& rightCount) {
  
     int rightTicks = rightCount.data - lastCountR;
      
-    if (rightTicks > 10000) {
-      distanceRight = (0 - (65535 - distanceRight))/TICKS_PER_METER;
-    }
-    else if (rightTicks < -10000) {
-      rightTicks = 65535 - rightTicks;
-    }
-    else{}
-    distanceRight = rightTicks/TICKS_PER_METER;
+    // if (rightTicks > 10000) {
+    //   distanceRight = (0 - (65535 - distanceRight))/TICKS_PER_METER;
+    // }
+    // else if (rightTicks < -10000) {
+    //   rightTicks = 65535 - rightTicks;
+    // }
+    // else{}
+    distanceRight = (rightTicks/TICKS_PER_REVOLUTION) * 2 * PI * WHEEL_RADIUS;
   }
   lastCountR = rightCount.data;
 }
@@ -161,13 +161,13 @@ void update_odom() {
   // Average angle during the last cycle
   double avgAngle = cycleAngle/2 + odomOld.pose.pose.orientation.z;
      
-  if (avgAngle > PI) {
-    avgAngle -= 2*PI;
-  }
-  else if (avgAngle < -PI) {
-    avgAngle += 2*PI;
-  }
-  else{}
+  // if (avgAngle > PI) {
+  //   avgAngle -= 2*PI;
+  // }
+  // else if (avgAngle < -PI) {
+  //   avgAngle += 2*PI;
+  // }
+  // else{}
  
   // Calculate the new pose (x, y, and theta)
   odomNew.pose.pose.position.x = odomOld.pose.pose.position.x + cos(avgAngle)*cycleDistance;
@@ -224,7 +224,7 @@ int main(int argc, char **argv) {
   odomOld.pose.pose.orientation.z = initialTheta;
  
   // Launch ROS and create a node
-  ros::init(argc, argv, "ekf_odom_pub");
+  ros::init(argc, argv, "odom_pub_node");
   ros::NodeHandle node;
  
   // Subscribe to ROS topics
@@ -242,10 +242,10 @@ int main(int argc, char **argv) {
      
   while(ros::ok()) {
      
-    if(initialPoseRecieved) {
+    //if(initialPoseRecieved) {
       update_odom();
       publish_quat();
-    }
+    //}
     ros::spinOnce();
     loop_rate.sleep();
   }

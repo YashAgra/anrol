@@ -2,8 +2,8 @@
 
 #include "CytronMotorDriver.h"
 // Configure the motor driver.
-CytronMD motor1(PWM_DIR, 2, 3);  // PWM 1 = Pin 2, DIR 1 = Pin 4.
-CytronMD motor2(PWM_DIR, 4, 5); // PWM 2 = Pin 3, DIR 2 = Pin 5.
+CytronMD motor1(PWM_DIR, 3, 2);  // PWM 1 = Pin 2, DIR 1 = Pin 4.
+CytronMD motor2(PWM_DIR, 5, 4); // PWM 2 = Pin 3, DIR 2 = Pin 5.
 
 //motor 1 -> left, motor 2 -> right
 
@@ -25,7 +25,7 @@ geometry_msgs::Twist msg;
 
 float move1;
 float move2;
-int speed = 200;
+int speed = 100;
 
 //encoded motors inports-------------------
 #define ENC_IN_LEFT_A 18
@@ -142,7 +142,7 @@ void setup() {
 }
 
 void left_wheel_tick(){
-  left_wheel_tick_count.data = static_cast<int16_t>(leftMotor.read());
+  left_wheel_tick_count.data = static_cast<int16_t>(-leftMotor.read());
   
 }
 void right_wheel_tick(){
@@ -170,7 +170,7 @@ void back(float speed)
   // digitalWrite(leftback, LOW);
   // digitalWrite(rightback, LOW);
   delay(100);
-  die();
+  
 
 }
 void front(float speed)
@@ -186,26 +186,26 @@ void front(float speed)
   // digitalWrite(leftback, HIGH);
   // digitalWrite(rightback, HIGH);
   delay(100);
-  die();
+  
 }
 void right(float speed)
 {
   // m.motor(leftforw, BACKWARD, speed);
   // m.motor(rightforw, FORWARD, speed);
-  motor1.setSpeed(speed);
+  motor1.setSpeed(0);
   motor2.setSpeed(-speed);
   // digitalWrite(leftforw, LOW);
   // digitalWrite(rightforw, HIGH);
   // digitalWrite(leftback, LOW);
   // digitalWrite(rightback, LOW);
   delay(100);
-  die();
+  
 
 }
 void left(float speed)
 {
   //
-  motor2.setSpeed(speed);
+  motor2.setSpeed(0);
   motor1.setSpeed(-speed);
   //    m.motor(leftback, BACKWARD, speed);
   //    m.motor(rightback, FORWARD, speed);
@@ -214,7 +214,7 @@ void left(float speed)
   // digitalWrite(leftback, LOW);
   // digitalWrite(rightback, LOW);
   delay(100);
-  die();
+  
 }
 void die()
 {

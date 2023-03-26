@@ -15,6 +15,7 @@
           args="-d $(find anrol)/rviz/navigate.rviz"/>
 
 <!-- start rf20 laser odometry-->
-<include file="$(find rf2o_laser_odometry)/launch/rf2o_laser_odometry.launch"/>
+<!-- <include file="$(find rf2o_laser_odometry)/launch/rf2o_laser_odometry.launch"/> -->
+<node pkg="anrol" name="odom_pub_node" type="odom_pub_node.py" output="screen"/>
 
 </launch>

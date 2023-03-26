@@ -119,7 +119,7 @@ void publish_quat() {
   nav_msgs::Odometry quatOdom;
   quatOdom.header.stamp = odomNew.header.stamp;
   quatOdom.header.frame_id = "odom";
-  quatOdom.child_frame_id = "base_link";
+  quatOdom.child_frame_id = "base_footprint";
   quatOdom.pose.pose.position.x = odomNew.pose.pose.position.x;
   quatOdom.pose.pose.position.y = odomNew.pose.pose.position.y;
   quatOdom.pose.pose.position.z = odomNew.pose.pose.position.z;
@@ -236,7 +236,7 @@ int main(int argc, char **argv) {
   odom_data_pub = node.advertise<nav_msgs::Odometry>("odom_data_euler", 100);
  
   // Publisher of full odom message where orientation is quaternion
-  odom_data_pub_quat = node.advertise<nav_msgs::Odometry>("odom_data_quat", 100);
+  odom_data_pub_quat = node.advertise<nav_msgs::Odometry>("odom", 100);
  
   ros::Rate loop_rate(30); 
      

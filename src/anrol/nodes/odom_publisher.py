@@ -91,10 +91,10 @@ while not rospy.is_shutdown():
        (x, y, 0.),
        odom_quat,
        current_time,
-       "base_link",
+       "base_footprint",
        "odom"
     )
-
+    
     # next, we'll publish the odometry message over ROS
     odom = Odometry()
     odom.header.stamp = current_time
@@ -107,7 +107,7 @@ while not rospy.is_shutdown():
        vy=dy/dt
        vth=dth/dt
 
-    odom.child_frame_id = "base_link"
+    odom.child_frame_id = "base_footprint"
     odom.twist.twist = Twist(Vector3(vx, vy, 0), Vector3(0, 0, vth))
 
     odom_pub.publish(odom)
